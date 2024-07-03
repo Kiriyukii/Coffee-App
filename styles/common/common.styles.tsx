@@ -42,4 +42,11 @@ export const commonStyles = StyleSheet.create({
     borderRadius: 5,
     marginHorizontal: 5,
   },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    position: 'absolute',
+    top: 60,
+  },
 });

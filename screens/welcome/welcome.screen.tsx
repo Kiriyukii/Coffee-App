@@ -50,10 +50,10 @@ export default function WelcomeScreen() {
       renderItem={renderItem}
       data={OnBoadingSwiperData}
       onDone={() => {
-        router.push('/login');
+        router.push('/(routes)/login');
       }}
       onSkip={() => {
-        router.push('/login');
+        router.push('/(routes)/login');
       }}
       renderNextButton={() => (
         <View style={styles.buttonContainer}>
