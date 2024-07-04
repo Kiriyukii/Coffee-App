@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { commonStyles } from '@/styles/common/common.styles';
 import { colors, fontSize } from '@/constants/tokens';
 import {
@@ -17,7 +17,7 @@ import {
   Sora_400Regular,
   Sora_200ExtraLight,
 } from '@expo-google-fonts/sora';
-import { Fontisto, Entypo } from '@expo/vector-icons';
+import { Fontisto, Entypo, AntDesign } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
@@ -25,12 +25,10 @@ import { widthPercentageToDP } from 'react-native-responsive-screen';
 
 export default function SignUpScreen() {
   const [isPasswordVisible, setIspasswordVisible] = useState(false);
+  const [confirmedPassword, setConfirmedPassword] = useState('');
   const [userInfo, setUserInfo] = useState({
+    name: '',
     email: '',
-    password: '',
-  });
-  const [required, setRequired] = useState('');
-  const [error, setError] = useState({
     password: '',
   });
   let [fontsLoaded, fontError] = useFonts({
@@ -41,6 +39,9 @@ export default function SignUpScreen() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
+  const handleSignUp = () => {
+    router.push('/(routes)/verifyAccount');
+  };
   return (
     <LinearGradient
       colors={[colors.primary, '#111111']}
@@ -79,6 +80,29 @@ export default function SignUpScreen() {
                 },
               ]}
             >
+              <AntDesign name="user" size={18} color="black" />
+              <TextInput
+                keyboardType="default"
+                placeholder="Name"
+                placeholderTextColor="#cccccc"
+                value={userInfo.name}
+                onChangeText={(value) =>
+                  setUserInfo({ ...userInfo, name: value })
+                }
+              />
+            </View>
+            <View
+              style={[
+                styles.input,
+                {
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: 'white',
+                  gap: 10,
+                  paddingLeft: 20,
+                },
+              ]}
+            >
               <Fontisto name="email" size={18} color="black" />
               <TextInput
                 keyboardType="email-address"
@@ -89,11 +113,6 @@ export default function SignUpScreen() {
                   setUserInfo({ ...userInfo, email: value })
                 }
               />
-              {required && (
-                <View style={commonStyles.errorContainer}>
-                  <Entypo name="cross" size={18} color={'red'} />
-                </View>
-              )}
             </View>
             <View
               style={[
@@ -129,14 +148,6 @@ export default function SignUpScreen() {
                   <Entypo name="eye-with-line" size={18} color="black" />
                 )}
               </TouchableOpacity>
-              {error.password && (
-                <View style={[commonStyles.errorContainer, { top: 145 }]}>
-                  <Entypo name="cross" size={18} color={'red'} />
-                  <Text style={{ color: 'red', fontSize: 11, marginTop: -1 }}>
-                    {error.password}
-                  </Text>
-                </View>
-              )}
             </View>
             <View
               style={[
@@ -157,10 +168,8 @@ export default function SignUpScreen() {
                 secureTextEntry={!isPasswordVisible}
                 placeholder="Verify your password"
                 placeholderTextColor="#cccccc"
-                value={userInfo.password}
-                onChangeText={(value) =>
-                  setUserInfo({ ...userInfo, password: value })
-                }
+                value={confirmedPassword}
+                onChangeText={(value) => setConfirmedPassword(value)}
               />
               <TouchableOpacity
                 style={{ paddingRight: 20 }}
@@ -172,14 +181,6 @@ export default function SignUpScreen() {
                   <Entypo name="eye-with-line" size={18} color="black" />
                 )}
               </TouchableOpacity>
-              {error.password && (
-                <View style={[commonStyles.errorContainer, { top: 145 }]}>
-                  <Entypo name="cross" size={18} color={'red'} />
-                  <Text style={{ color: 'red', fontSize: 11, marginTop: -1 }}>
-                    {error.password}
-                  </Text>
-                </View>
-              )}
             </View>
           </View>
           <TouchableOpacity
@@ -191,7 +192,7 @@ export default function SignUpScreen() {
               width: widthPercentageToDP(85),
               alignSelf: 'center',
             }}
-            onPress={() => {}}
+            onPress={handleSignUp}
           >
             <Text
               style={{
@@ -200,7 +201,7 @@ export default function SignUpScreen() {
                 fontFamily: 'SoraThin',
               }}
             >
-              Sign In
+              Sign Up
             </Text>
           </TouchableOpacity>
           <View style={styles.signupRedirect}>
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginHorizontal: 16,
     marginTop: 30,
-    rowGap: 20,
+    rowGap: 10,
   },
   input: {
     height: 50,

@@ -50,7 +50,8 @@ function RootLayoutNav() {
           <Stack.Screen name="index" />
           <Stack.Screen name="(routes)/welcome/index" />
           <Stack.Screen name="(routes)/login/index" />
-          <Stack.Screen name="(routes)/sign-up/index" />
+          <Stack.Screen name="(routes)/signUp/index" />
+          <Stack.Screen name="(routes)/forgotPassword/index" />
         </Stack>
       )}
     </>

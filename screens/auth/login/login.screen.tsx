@@ -29,10 +29,6 @@ export default function LoginScreen() {
     email: '',
     password: '',
   });
-  const [required, setRequired] = useState('');
-  const [error, setError] = useState({
-    password: '',
-  });
   let [fontsLoaded, fontError] = useFonts({
     SoraBold: Sora_700Bold,
     SoraRegular: Sora_400Regular,
@@ -89,11 +85,6 @@ export default function LoginScreen() {
                   setUserInfo({ ...userInfo, email: value })
                 }
               />
-              {required && (
-                <View style={commonStyles.errorContainer}>
-                  <Entypo name="cross" size={18} color={'red'} />
-                </View>
-              )}
             </View>
             <View
               style={[
@@ -111,13 +102,14 @@ export default function LoginScreen() {
               <TextInput
                 style={{ flex: 1 }}
                 keyboardType="default"
+                defaultValue=""
                 secureTextEntry={!isPasswordVisible}
                 placeholder="Password"
                 placeholderTextColor="#cccccc"
                 value={userInfo.password}
-                onChangeText={(value) =>
-                  setUserInfo({ ...userInfo, password: value })
-                }
+                onChangeText={(value) => {
+                  setUserInfo({ ...userInfo, password: value });
+                }}
               />
               <TouchableOpacity
                 style={{ paddingRight: 20 }}
@@ -129,18 +121,10 @@ export default function LoginScreen() {
                   <Entypo name="eye-with-line" size={18} color="black" />
                 )}
               </TouchableOpacity>
-              {error.password && (
-                <View style={[commonStyles.errorContainer, { top: 145 }]}>
-                  <Entypo name="cross" size={18} color={'red'} />
-                  <Text style={{ color: 'red', fontSize: 11, marginTop: -1 }}>
-                    {error.password}
-                  </Text>
-                </View>
-              )}
             </View>
             <TouchableOpacity
               onPress={() => {
-                router.push('/(routes)/forgot-password');
+                router.push('/(routes)/forgotPassword');
               }}
             >
               <Text
@@ -186,7 +170,7 @@ export default function LoginScreen() {
             </Text>
             <TouchableOpacity
               onPress={() => {
-                router.push('(routes)/sign-up');
+                router.push('(routes)/signUp');
               }}
             >
               <Text
