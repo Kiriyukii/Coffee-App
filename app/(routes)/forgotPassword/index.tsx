@@ -64,7 +64,7 @@ export default function ForgotPassword() {
         </Text>
         <TouchableOpacity
           onPress={() => {
-            router.push('(routes)/login');
+            router.push('/(routes)/login');
           }}
         >
           <Text

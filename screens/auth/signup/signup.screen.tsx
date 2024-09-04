@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -22,10 +23,17 @@ import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
+import axios from 'axios';
+import { SERVER_URI } from '@/utils/uri';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Toast } from 'react-native-toast-notifications';
 
 export default function SignUpScreen() {
   const [isPasswordVisible, setIspasswordVisible] = useState(false);
-  const [confirmedPassword, setConfirmedPassword] = useState('');
+  const [buttonSpinner, setButtonSpinner] = useState(false);
+  const [error, setError] = useState({
+    password: '',
+  });
   const [userInfo, setUserInfo] = useState({
     name: '',
     email: '',
@@ -39,8 +47,63 @@ export default function SignUpScreen() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-  const handleSignUp = () => {
-    router.push('/(routes)/verifyAccount');
+  const handlePasswordValidation = (value: string) => {
+    const password = value;
+    const passwordSpecialCharacter = /(?=.*[!@#$&*])/;
+    const passwordOneNumber = /(?=.*[0-9])/;
+    const passwordSixValue = /(?=.{6,})/;
+
+    if (!passwordSpecialCharacter.test(password)) {
+      setError({
+        ...error,
+        password: 'Write at least one special character',
+      });
+      setUserInfo({ ...userInfo, password: '' });
+    } else if (!passwordOneNumber.test(password)) {
+      setError({
+        ...error,
+        password: 'Write at least one number',
+      });
+      setUserInfo({ ...userInfo, password: '' });
+    } else if (!passwordSixValue.test(password)) {
+      setError({
+        ...error,
+        password: 'Write at least 6 characters',
+      });
+      setUserInfo({ ...userInfo, password: '' });
+    } else {
+      setError({
+        ...error,
+        password: '',
+      });
+      setUserInfo({ ...userInfo, password: value });
+    }
+  };
+  const handleSignUp = async () => {
+    setButtonSpinner(true);
+    await axios
+      .post(`${SERVER_URI}/registration`, {
+        name: userInfo.name,
+        email: userInfo.email,
+        password: userInfo.password,
+      })
+      .then(async (res) => {
+        const stringToken = JSON.stringify(res.data.activationToken);
+        await AsyncStorage.setItem('activation_token', stringToken);
+        Toast.show(res.data.message, { type: 'success' });
+        setUserInfo({
+          name: '',
+          email: '',
+          password: '',
+        });
+        setButtonSpinner(false);
+        router.push('/(routes)/verifyAccount');
+      })
+      .catch((error) => {
+        console.log(error);
+        setButtonSpinner(false);
+        Toast.show('Email already exist', { type: 'danger' });
+      });
   };
   return (
     <LinearGradient
@@ -75,13 +138,13 @@ export default function SignUpScreen() {
                   flexDirection: 'row',
                   alignItems: 'center',
                   backgroundColor: 'white',
-                  gap: 10,
                   paddingLeft: 20,
                 },
               ]}
             >
               <AntDesign name="user" size={18} color="black" />
               <TextInput
+                style={[styles.input, { width: widthPercentageToDP(70) }]}
                 keyboardType="default"
                 placeholder="Name"
                 placeholderTextColor="#cccccc"
@@ -98,13 +161,13 @@ export default function SignUpScreen() {
                   flexDirection: 'row',
                   alignItems: 'center',
                   backgroundColor: 'white',
-                  gap: 10,
                   paddingLeft: 20,
                 },
               ]}
             >
               <Fontisto name="email" size={18} color="black" />
               <TextInput
+                style={[styles.input, { width: widthPercentageToDP(70) }]}
                 keyboardType="email-address"
                 placeholder="support@gmail.com"
                 placeholderTextColor="#cccccc"
@@ -121,22 +184,22 @@ export default function SignUpScreen() {
                   flexDirection: 'row',
                   alignItems: 'center',
                   backgroundColor: 'white',
-                  gap: 10,
                   paddingLeft: 20,
                 },
               ]}
             >
               <Fontisto name="locked" size={18} color="black" />
               <TextInput
-                style={{ flex: 1 }}
+                style={[
+                  styles.input,
+                  { width: widthPercentageToDP(70), flex: 1 },
+                ]}
                 keyboardType="default"
+                defaultValue=""
                 secureTextEntry={!isPasswordVisible}
                 placeholder="Password"
                 placeholderTextColor="#cccccc"
-                value={userInfo.password}
-                onChangeText={(value) =>
-                  setUserInfo({ ...userInfo, password: value })
-                }
+                onChangeText={handlePasswordValidation}
               />
               <TouchableOpacity
                 style={{ paddingRight: 20 }}
@@ -148,44 +211,19 @@ export default function SignUpScreen() {
                   <Entypo name="eye-with-line" size={18} color="black" />
                 )}
               </TouchableOpacity>
-            </View>
-            <View
-              style={[
-                styles.input,
-                {
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: 'white',
-                  gap: 10,
-                  paddingLeft: 20,
-                },
-              ]}
-            >
-              <Fontisto name="locked" size={18} color="black" />
-              <TextInput
-                style={{ flex: 1 }}
-                keyboardType="default"
-                secureTextEntry={!isPasswordVisible}
-                placeholder="Verify your password"
-                placeholderTextColor="#cccccc"
-                value={confirmedPassword}
-                onChangeText={(value) => setConfirmedPassword(value)}
-              />
-              <TouchableOpacity
-                style={{ paddingRight: 20 }}
-                onPress={() => setIspasswordVisible(!isPasswordVisible)}
-              >
-                {isPasswordVisible ? (
-                  <Entypo name="eye" size={18} color="black" />
-                ) : (
-                  <Entypo name="eye-with-line" size={18} color="black" />
-                )}
-              </TouchableOpacity>
+              {error.password && (
+                <View style={[commonStyles.errorContainer, { top: 55 }]}>
+                  <Entypo name="cross" size={18} color={'red'} />
+                  <Text style={{ color: 'red', fontSize: 11, marginTop: -1 }}>
+                    {error.password}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
           <TouchableOpacity
             style={{
-              marginTop: 20,
+              marginTop: 30,
               backgroundColor: colors.primary,
               borderRadius: 8,
               paddingVertical: 15,
@@ -194,15 +232,19 @@ export default function SignUpScreen() {
             }}
             onPress={handleSignUp}
           >
-            <Text
-              style={{
-                textAlign: 'center',
-                color: colors.text,
-                fontFamily: 'SoraThin',
-              }}
-            >
-              Sign Up
-            </Text>
+            {buttonSpinner ? (
+              <ActivityIndicator size={'small'} color={'white'} />
+            ) : (
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: colors.text,
+                  fontFamily: 'SoraThin',
+                }}
+              >
+                Sign Up
+              </Text>
+            )}
           </TouchableOpacity>
           <View style={styles.signupRedirect}>
             <Text
@@ -216,7 +258,7 @@ export default function SignUpScreen() {
             </Text>
             <TouchableOpacity
               onPress={() => {
-                router.push('(routes)/login');
+                router.push('/(routes)/login');
               }}
             >
               <Text
@@ -267,7 +309,7 @@ const styles = StyleSheet.create({
     width: widthPercentageToDP(85),
     marginHorizontal: 16,
     borderRadius: 8,
-    fontSize: fontSize.base,
+    fontSize: fontSize.sm,
     backgroundColor: 'white',
     color: '#A1A1A1',
   },
@@ -286,4 +328,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 10,
   },
+  inputBox: {
+    width: '100%',
+    height: 40,
+    backgroundColor: '#f5f5f5',
+    borderColor: '#cccccc',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
 });
+function setError(arg0: any) {
+  throw new Error('Function not implemented.');
+}

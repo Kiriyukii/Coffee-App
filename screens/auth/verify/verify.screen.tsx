@@ -17,6 +17,10 @@ import {
 } from '@expo-google-fonts/sora';
 import { useFonts } from 'expo-font';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SERVER_URI } from '@/utils/uri';
+import axios from 'axios';
+import { Toast } from 'react-native-toast-notifications';
 
 export default function VerifyAccountScreen() {
   let [fontsLoaded, fontError] = useFonts({
@@ -44,7 +48,33 @@ export default function VerifyAccountScreen() {
       inputs.current[index - 1].current.focus();
     }
   };
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    let token = null;
+    const otp = code.join('');
+    const activation_token = await AsyncStorage.getItem('activation_token');
+    if (activation_token !== null) {
+      const parsedData = JSON.parse(activation_token);
+      token = parsedData.token;
+    }
+    await axios
+      .post(`${SERVER_URI}/activate-user`, {
+        activation_token: token,
+        activation_code: otp,
+      })
+      .then((res) => {
+        Toast.show('Your account activated successfully', {
+          type: 'success',
+        });
+        setCode(new Array(4).fill(''));
+        router.push('/(routes)/login');
+      })
+      .catch((error) => {
+        console.log(error);
+        Toast.show('Your OTP is not valid or expired', {
+          type: 'danger',
+        });
+      });
+  };
 
   return (
     <View style={[commonStyles.container, { gap: 10 }]}>
@@ -92,7 +122,7 @@ export default function VerifyAccountScreen() {
         </Text>
         <TouchableOpacity
           onPress={() => {
-            router.push('(routes)/login');
+            router.push('/(routes)/login');
           }}
         >
           <Text

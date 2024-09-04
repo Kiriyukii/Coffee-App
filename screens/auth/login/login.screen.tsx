@@ -22,11 +22,20 @@ import { commonStyles } from '@/styles/common/common.styles';
 import { Entypo, Fontisto } from '@expo/vector-icons';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 import { router } from 'expo-router';
+import axios from 'axios';
+import { SERVER_URI } from '@/utils/uri';
+import { Toast } from 'react-native-toast-notifications';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
   const [isPasswordVisible, setIspasswordVisible] = useState(false);
+  const [buttonSpinner, setButtonSpinner] = useState(false);
   const [userInfo, setUserInfo] = useState({
     email: '',
+    password: '',
+  });
+  const [required, setRequired] = useState('');
+  const [error, setError] = useState({
     password: '',
   });
   let [fontsLoaded, fontError] = useFonts({
@@ -37,6 +46,54 @@ export default function LoginScreen() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
+  const handlePasswordValidation = (value: string) => {
+    const password = value;
+    const passwordSpecialCharacter = /(?=.*[!@#$&*])/;
+    const passwordOneNumber = /(?=.*[0-9])/;
+    const passwordSixValue = /(?=.{6,})/;
+
+    if (!passwordSpecialCharacter.test(password)) {
+      setError({
+        ...error,
+        password: 'Write at least one special character',
+      });
+      setUserInfo({ ...userInfo, password: '' });
+    } else if (!passwordOneNumber.test(password)) {
+      setError({
+        ...error,
+        password: 'Write at least one number',
+      });
+      setUserInfo({ ...userInfo, password: '' });
+    } else if (!passwordSixValue.test(password)) {
+      setError({
+        ...error,
+        password: 'Write at least 6 characters',
+      });
+      setUserInfo({ ...userInfo, password: '' });
+    } else {
+      setError({
+        ...error,
+        password: '',
+      });
+      setUserInfo({ ...userInfo, password: value });
+    }
+  };
+  const handleSignIn = async () => {
+    await axios
+      .post(`${SERVER_URI}/login`, {
+        email: userInfo.email,
+        password: userInfo.password,
+      })
+      .then(async (res) => {
+        await AsyncStorage.setItem('access_token', res.data.accessToken);
+        await AsyncStorage.setItem('refresh_token', res.data.refreshToken);
+        router.push('/(tabs)/home');
+      })
+      .catch((error) => {
+        Toast.show('Email or password is incorrect', { type: 'danger' });
+      });
+  };
+
   return (
     <LinearGradient
       colors={[colors.primary, '#111111']}
@@ -70,13 +127,13 @@ export default function LoginScreen() {
                   flexDirection: 'row',
                   alignItems: 'center',
                   backgroundColor: 'white',
-                  gap: 10,
                   paddingLeft: 20,
                 },
               ]}
             >
               <Fontisto name="email" size={18} color="black" />
               <TextInput
+                style={[styles.input, { width: widthPercentageToDP(70) }]}
                 keyboardType="email-address"
                 placeholder="support@gmail.com"
                 placeholderTextColor="#cccccc"
@@ -85,6 +142,11 @@ export default function LoginScreen() {
                   setUserInfo({ ...userInfo, email: value })
                 }
               />
+              {required && (
+                <View style={commonStyles.errorContainer}>
+                  <Entypo name="cross" size={18} color={'red'} />
+                </View>
+              )}
             </View>
             <View
               style={[
@@ -93,23 +155,22 @@ export default function LoginScreen() {
                   flexDirection: 'row',
                   alignItems: 'center',
                   backgroundColor: 'white',
-                  gap: 10,
                   paddingLeft: 20,
                 },
               ]}
             >
               <Fontisto name="locked" size={18} color="black" />
               <TextInput
-                style={{ flex: 1 }}
+                style={[
+                  styles.input,
+                  { width: widthPercentageToDP(70), flex: 1 },
+                ]}
                 keyboardType="default"
                 defaultValue=""
                 secureTextEntry={!isPasswordVisible}
                 placeholder="Password"
                 placeholderTextColor="#cccccc"
-                value={userInfo.password}
-                onChangeText={(value) => {
-                  setUserInfo({ ...userInfo, password: value });
-                }}
+                onChangeText={handlePasswordValidation}
               />
               <TouchableOpacity
                 style={{ paddingRight: 20 }}
@@ -121,6 +182,14 @@ export default function LoginScreen() {
                   <Entypo name="eye-with-line" size={18} color="black" />
                 )}
               </TouchableOpacity>
+              {error.password && (
+                <View style={[commonStyles.errorContainer, { top: 55 }]}>
+                  <Entypo name="cross" size={18} color={'red'} />
+                  <Text style={{ color: 'red', fontSize: 11, marginTop: -1 }}>
+                    {error.password}
+                  </Text>
+                </View>
+              )}
             </View>
             <TouchableOpacity
               onPress={() => {
@@ -130,7 +199,7 @@ export default function LoginScreen() {
               <Text
                 style={[
                   styles.forgotText,
-                  { fontFamily: 'SoraThin', marginTop: -10 },
+                  { fontFamily: 'SoraThin', marginTop: 10 },
                 ]}
               >
                 Forgot password?
@@ -146,7 +215,7 @@ export default function LoginScreen() {
               width: widthPercentageToDP(85),
               alignSelf: 'center',
             }}
-            onPress={() => {}}
+            onPress={handleSignIn}
           >
             <Text
               style={{
@@ -170,7 +239,7 @@ export default function LoginScreen() {
             </Text>
             <TouchableOpacity
               onPress={() => {
-                router.push('(routes)/signUp');
+                router.push('/(routes)/signUp');
               }}
             >
               <Text
@@ -221,7 +290,7 @@ const styles = StyleSheet.create({
     width: widthPercentageToDP(85),
     marginHorizontal: 16,
     borderRadius: 8,
-    fontSize: fontSize.base,
+    fontSize: fontSize.sm,
     backgroundColor: 'white',
     color: '#A1A1A1',
   },
