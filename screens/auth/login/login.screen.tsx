@@ -87,7 +87,7 @@ export default function LoginScreen() {
       .then(async (res) => {
         await AsyncStorage.setItem('access_token', res.data.accessToken);
         await AsyncStorage.setItem('refresh_token', res.data.refreshToken);
-        router.push('/(tabs)/home');
+        router.push('/(tabs)');
       })
       .catch((error) => {
         Toast.show('Email or password is incorrect', { type: 'danger' });

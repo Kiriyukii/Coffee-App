@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function useUser() {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState<User>();
   const [error, setError] = useState('');
   useEffect(() => {
     const subscription = async () => {

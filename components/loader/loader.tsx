@@ -2,11 +2,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import AnimatedLoader from 'react-native-animated-loader';
+import { colors } from '@/constants/tokens';
 
 export default function Loader() {
   return (
     <LinearGradient
-      colors={['#E5ECF9', '#F6F7F9']}
+      colors={[colors.background, colors.background]}
       style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
     >
       <AnimatedLoader
