@@ -31,7 +31,7 @@ export default function HomeBannerSlider() {
           <View key={index} style={styles.slide}>
             <Image
               source={item.bannerImageUrl!}
-              style={{ width: 450, height: 250 }}
+              style={{ width: 450, height: 200 }}
             />
           </View>
         ))}
