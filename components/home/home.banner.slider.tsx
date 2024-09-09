@@ -9,6 +9,7 @@ import { useFonts } from 'expo-font';
 import { styles } from '@/styles/home/banner.style';
 import Swiper from 'react-native-swiper';
 import { BannerData } from '@/constants/constants';
+import { heightPercentageToDP } from 'react-native-responsive-screen';
 
 export default function HomeBannerSlider() {
   let [fontsLoaded, fontError] = useFonts({
@@ -31,7 +32,7 @@ export default function HomeBannerSlider() {
           <View key={index} style={styles.slide}>
             <Image
               source={item.bannerImageUrl!}
-              style={{ width: 450, height: 200 }}
+              style={{ width: 450, height: heightPercentageToDP(22) }}
             />
           </View>
         ))}

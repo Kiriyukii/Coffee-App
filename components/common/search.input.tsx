@@ -7,6 +7,7 @@ import {
 } from '@expo-google-fonts/sora';
 import { useFonts } from 'expo-font';
 import { AntDesign } from '@expo/vector-icons';
+import { colors } from '@/constants/tokens';
 
 export default function SearchInput() {
   let [fontsLoaded, fontError] = useFonts({
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 14,
-    color: 'black',
+    color: colors.text,
     paddingVertical: 10,
     width: 271,
     height: 48,
