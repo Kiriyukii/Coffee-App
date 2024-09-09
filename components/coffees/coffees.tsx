@@ -1,4 +1,10 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import {
   Sora_700Bold,
@@ -12,6 +18,7 @@ import Loader from '../loader/loader';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/tokens';
 import { styles } from '@/styles/home/cate.style';
+import CoffeeCard from '../card/coffee.card';
 
 export default function Coffees() {
   let [fontsLoaded, fontError] = useFonts({
@@ -23,6 +30,7 @@ export default function Coffees() {
     return null;
   }
   const [coffees, setCoffees] = useState<CoffeesType[]>([]);
+  const [originalCoffees, setOriginalCoffees] = useState<CoffeesType[]>([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -30,7 +38,6 @@ export default function Coffees() {
     axios
       .get(`${SERVER_URI}/get-layout/Categories`)
       .then((res) => {
-        setLoading(false);
         setCategories(res.data.layout.categories);
         fetchCoffees();
       })
@@ -44,6 +51,7 @@ export default function Coffees() {
       .get(`${SERVER_URI}/get-coffees`)
       .then((res) => {
         setCoffees(res.data.coffees);
+        setOriginalCoffees(res.data.coffees);
         setLoading(false);
       })
       .catch((error) => {
@@ -53,10 +61,14 @@ export default function Coffees() {
   };
   const handleCategories = (e: string) => {
     setActiveCategory(e);
-    // const filterCoffees = coffees?.filter(
-    //   (i: CoffeesType) => i.categories === e,
-    // );
-    // console.log(filterCoffees);
+    if (e === 'All') {
+      setCoffees(originalCoffees);
+    } else {
+      const filterCoffees = originalCoffees.filter(
+        (i: CoffeesType) => i.categories === e,
+      );
+      setCoffees(filterCoffees);
+    }
   };
   return (
     <>
@@ -109,6 +121,20 @@ export default function Coffees() {
               ))}
             </ScrollView>
           </View>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={coffees}
+            contentContainerStyle={styles.FlatlistContainer}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity style={{ marginLeft: 20 }}>
+                  <CoffeeCard item={item} />
+                </TouchableOpacity>
+              );
+            }}
+          />
         </LinearGradient>
       )}
     </>
