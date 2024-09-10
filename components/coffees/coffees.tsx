@@ -20,6 +20,7 @@ import { colors } from '@/constants/tokens';
 import { styles } from '@/styles/home/cate.style';
 import CoffeeCard from '../card/coffee.card';
 import BeanCard from '../card/bean.card';
+import { router } from 'expo-router';
 
 export default function Coffees() {
   let [fontsLoaded, fontError] = useFonts({
@@ -32,7 +33,6 @@ export default function Coffees() {
   }
   const [coffees, setCoffees] = useState<CoffeesType[]>([]);
   const [originalCoffees, setOriginalCoffees] = useState<CoffeesType[]>([]);
-
   const [beans, setBeans] = useState<BeansType[]>([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
@@ -158,7 +158,14 @@ export default function Coffees() {
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => {
               return (
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    router.push({
+                      pathname: '/(routes)/coffee-details',
+                      params: { item: JSON.stringify(item) },
+                    })
+                  }
+                >
                   <CoffeeCard item={item} />
                 </TouchableOpacity>
               );

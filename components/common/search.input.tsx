@@ -1,5 +1,5 @@
 import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Sora_700Bold,
   Sora_400Regular,
