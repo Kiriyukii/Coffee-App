@@ -11,4 +11,15 @@ export const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.text,
   },
+  FlatlistContainer: {
+    gap: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 30,
+  },
+  beanTitleText: {
+    fontSize: fontSize.base,
+    color: colors.text,
+    fontFamily: 'SoraRegular',
+    marginLeft: 16,
+  },
 });

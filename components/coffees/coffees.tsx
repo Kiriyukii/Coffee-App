@@ -19,6 +19,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/tokens';
 import { styles } from '@/styles/home/cate.style';
 import CoffeeCard from '../card/coffee.card';
+import BeanCard from '../card/bean.card';
 
 export default function Coffees() {
   let [fontsLoaded, fontError] = useFonts({
@@ -31,6 +32,9 @@ export default function Coffees() {
   }
   const [coffees, setCoffees] = useState<CoffeesType[]>([]);
   const [originalCoffees, setOriginalCoffees] = useState<CoffeesType[]>([]);
+
+  const [beans, setBeans] = useState<BeansType[]>([]);
+  const [originalBeans, setOriginalBeans] = useState<BeansType[]>([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -46,12 +50,36 @@ export default function Coffees() {
       });
   }, []);
 
+  useEffect(() => {
+    axios
+      .get(`${SERVER_URI}/get-beans`)
+      .then((res) => {
+        setBeans(res.data.beans);
+        fetchBeans();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
   const fetchCoffees = () => {
     axios
       .get(`${SERVER_URI}/get-coffees`)
       .then((res) => {
         setCoffees(res.data.coffees);
         setOriginalCoffees(res.data.coffees);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
+  const fetchBeans = () => {
+    axios
+      .get(`${SERVER_URI}/get-beans`)
+      .then((res) => {
+        setBeans(res.data.beans);
+        setOriginalBeans(res.data.beans);
         setLoading(false);
       })
       .catch((error) => {
@@ -79,9 +107,11 @@ export default function Coffees() {
           colors={[colors.background, colors.background]}
           style={{ flex: 1, marginTop: -15 }}
         >
+          {/* ScrollView coffee */}
           <View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <TouchableOpacity
+                key="All"
                 style={[styles.categoryScrollViewItem]}
                 onPress={() => handleCategories('All')}
               >
@@ -101,6 +131,7 @@ export default function Coffees() {
               </TouchableOpacity>
               {categories?.map((i: any, index: number) => (
                 <TouchableOpacity
+                  key={i?.title || index}
                   style={styles.categoryScrollViewItem}
                   onPress={() => handleCategories(i?.title)}
                 >
@@ -129,8 +160,27 @@ export default function Coffees() {
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => {
               return (
-                <TouchableOpacity style={{ marginLeft: 20 }}>
+                <TouchableOpacity>
                   <CoffeeCard item={item} />
+                </TouchableOpacity>
+              );
+            }}
+          />
+          {/* Scroll view Bean */}
+          <Text style={styles.beanTitleText}>Coffee Beans</Text>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={beans}
+            contentContainerStyle={[
+              styles.FlatlistContainer,
+              { marginBottom: 90 },
+            ]}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity>
+                  <BeanCard item={item} />
                 </TouchableOpacity>
               );
             }}
