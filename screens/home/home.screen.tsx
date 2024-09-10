@@ -10,7 +10,6 @@ import Coffees from '@/components/coffees/coffees';
 
 export default function HomeScreen() {
   return (
-    //change .text to bg
     <LinearGradient
       colors={[colors.background, colors.background]}
       style={{ flex: 1, paddingTop: 50 }}

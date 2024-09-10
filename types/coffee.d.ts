@@ -18,6 +18,7 @@ type CoffeesType = {
   average_rating: number;
   ratings_count: string;
   favorites: boolean;
+  type: string;
   handlePressButton?: any;
 };
 type BeansType = {
@@ -39,5 +40,6 @@ type BeansType = {
   average_rating: number;
   ratings_count: string;
   favorites: boolean;
+  type: string;
   handlePressButton?: any;
 };

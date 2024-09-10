@@ -34,7 +34,6 @@ export default function Coffees() {
   const [originalCoffees, setOriginalCoffees] = useState<CoffeesType[]>([]);
 
   const [beans, setBeans] = useState<BeansType[]>([]);
-  const [originalBeans, setOriginalBeans] = useState<BeansType[]>([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -79,7 +78,6 @@ export default function Coffees() {
       .get(`${SERVER_URI}/get-beans`)
       .then((res) => {
         setBeans(res.data.beans);
-        setOriginalBeans(res.data.beans);
         setLoading(false);
       })
       .catch((error) => {

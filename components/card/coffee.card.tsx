@@ -15,7 +15,7 @@ import {
 } from '@expo-google-fonts/sora';
 import { useFonts } from 'expo-font';
 
-const image = require('@/assets/images/test.jpg');
+const imageFallback = require('@/assets/images/test.jpg');
 
 export default function CoffeeCard({ item }: { item: CoffeesType }) {
   let [fontsLoaded, fontError] = useFonts({
@@ -28,7 +28,7 @@ export default function CoffeeCard({ item }: { item: CoffeesType }) {
   }
   const imageSource = item.imagelink_square?.url
     ? { uri: item.imagelink_square.url }
-    : image;
+    : imageFallback;
   return (
     <LinearGradient
       start={{ x: 0, y: 0 }}
