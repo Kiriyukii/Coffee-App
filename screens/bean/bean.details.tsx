@@ -10,7 +10,6 @@ import {
 import React, { useEffect, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { colors, fontSize } from '@/constants/tokens';
-import { StatusBar } from 'expo-status-bar';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 import { TouchableOpacity } from 'react-native';
 import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons';
@@ -23,24 +22,24 @@ import {
 } from '@expo-google-fonts/sora';
 import { useFonts } from 'expo-font';
 
-export default function CoffeeDetailScreen() {
+export default function BeanDetailScreen() {
   const { item } = useLocalSearchParams();
-  const coffeeData: CoffeesType = JSON.parse(item as string);
+  const beanData: BeansType = JSON.parse(item as string);
   const [isFavorite, setIsFavorite] = useState(false);
   const [fullDesc, setFullDesc] = useState(false);
   const [price, setPrice] = useState<{ size: string; price: number }>(
-    coffeeData.prices[0],
+    beanData.prices[0],
   );
   const imageFallback = require('@/assets/images/portrait.jpg');
-  const imageSource = coffeeData.imagelink_portrait?.url
-    ? { uri: coffeeData.imagelink_portrait.url }
+  const imageSource = beanData.imagelink_portrait?.url
+    ? { uri: beanData.imagelink_portrait.url }
     : imageFallback;
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
       try {
         const response = await axios.get(
-          `${SERVER_URI}/get-coffee/${coffeeData._id}`,
+          `${SERVER_URI}/get-bean/${beanData._id}`,
         );
         setIsFavorite(response.data.favorites);
       } catch (error) {
@@ -52,7 +51,7 @@ export default function CoffeeDetailScreen() {
   const toggleFavorites = async () => {
     try {
       const newStatus = !isFavorite;
-      await axios.patch(`${SERVER_URI}/patch-coffee/${coffeeData._id}`, {
+      await axios.patch(`${SERVER_URI}/patch-bean/${beanData._id}`, {
         favorites: newStatus,
       });
       setIsFavorite(newStatus);
@@ -114,9 +113,9 @@ export default function CoffeeDetailScreen() {
               <View style={styles.infoInnerContainer}>
                 <View style={styles.infoRowContainer}>
                   <View>
-                    <Text style={styles.titleText}>{coffeeData.name}</Text>
+                    <Text style={styles.titleText}>{beanData.name}</Text>
                     <Text style={styles.subtitleText}>
-                      {coffeeData.special_ingredient}
+                      {beanData.special_ingredient}
                     </Text>
                   </View>
                   <View style={styles.itemPropsContainer}>
@@ -126,14 +125,12 @@ export default function CoffeeDetailScreen() {
                         size={24}
                         color={colors.primary}
                       />
-                      <Text style={styles.firstPropText}>
-                        {coffeeData.type}
-                      </Text>
+                      <Text style={styles.firstPropText}>{beanData.type}</Text>
                     </View>
                     <View style={styles.firstProp}>
                       <Entypo name="drop" size={24} color={colors.primary} />
                       <Text style={styles.firstPropText}>
-                        {coffeeData.ingredients}
+                        {beanData.ingredients}
                       </Text>
                     </View>
                   </View>
@@ -142,14 +139,14 @@ export default function CoffeeDetailScreen() {
                   <View style={styles.ratingContainer}>
                     <AntDesign name="star" size={24} color={colors.primary} />
                     <Text style={styles.ratingText}>
-                      {coffeeData.average_rating}
+                      {beanData.average_rating}
                     </Text>
                     <Text style={styles.ratingSubtext}>
-                      ({coffeeData.ratings_count})
+                      ({beanData.ratings_count})
                     </Text>
                   </View>
                   <View style={styles.roastedContainer}>
-                    <Text style={styles.roastedText}>{coffeeData.roasted}</Text>
+                    <Text style={styles.roastedText}>{beanData.roasted}</Text>
                   </View>
                 </View>
               </View>
@@ -162,7 +159,7 @@ export default function CoffeeDetailScreen() {
                 onPress={() => setFullDesc((prev) => !prev)}
               >
                 <Text style={styles.descriptionText}>
-                  {coffeeData.description}
+                  {beanData.description}
                 </Text>
               </TouchableWithoutFeedback>
             ) : (
@@ -170,13 +167,13 @@ export default function CoffeeDetailScreen() {
                 onPress={() => setFullDesc((prev) => !prev)}
               >
                 <Text style={styles.descriptionText} numberOfLines={3}>
-                  {coffeeData.description}
+                  {beanData.description}
                 </Text>
               </TouchableWithoutFeedback>
             )}
             <Text style={styles.infoTitle}>Size</Text>
             <View style={styles.sizeOuterContainer}>
-              {coffeeData.prices.map(
+              {beanData.prices.map(
                 (data: { size: string; price: number }, index: number) => (
                   <TouchableOpacity
                     key={data.size}

@@ -14,7 +14,7 @@ type CoffeesType = {
   };
   ingredients: string;
   special_ingredient: string;
-  prices: { size: string; price: number };
+  prices: { size: string; price: number }[];
   average_rating: number;
   ratings_count: string;
   favorites: boolean;
@@ -36,7 +36,7 @@ type BeansType = {
   };
   ingredients: string;
   special_ingredient: string;
-  prices: { size: string; price: number };
+  prices: { size: string; price: number }[];
   average_rating: number;
   ratings_count: string;
   favorites: boolean;

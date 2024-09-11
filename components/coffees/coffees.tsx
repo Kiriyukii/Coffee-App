@@ -185,7 +185,14 @@ export default function Coffees() {
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => {
               return (
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    router.push({
+                      pathname: '/(routes)/bean-details',
+                      params: { item: JSON.stringify(item) },
+                    })
+                  }
+                >
                   <BeanCard item={item} />
                 </TouchableOpacity>
               );
