@@ -23,20 +23,13 @@ import BeanCard from '../card/bean.card';
 import { router } from 'expo-router';
 
 export default function Coffees() {
-  let [fontsLoaded, fontError] = useFonts({
-    SoraBold: Sora_700Bold,
-    SoraRegular: Sora_400Regular,
-    SoraThin: Sora_200ExtraLight,
-  });
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
   const [coffees, setCoffees] = useState<CoffeesType[]>([]);
   const [originalCoffees, setOriginalCoffees] = useState<CoffeesType[]>([]);
   const [beans, setBeans] = useState<BeansType[]>([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
+
   useEffect(() => {
     axios
       .get(`${SERVER_URI}/get-layout/Categories`)
@@ -96,6 +89,14 @@ export default function Coffees() {
       setCoffees(filterCoffees);
     }
   };
+  let [fontsLoaded, fontError] = useFonts({
+    SoraBold: Sora_700Bold,
+    SoraRegular: Sora_400Regular,
+    SoraThin: Sora_200ExtraLight,
+  });
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
   return (
     <>
       {loading ? (

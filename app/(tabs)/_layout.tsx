@@ -18,7 +18,7 @@ export default function TabsLayout() {
           } else if (route.name === 'cart/index') {
             iconName = require('@/assets/icons/Cart.png');
           } else if (route.name === 'profile/index') {
-            iconName = user?.avatar || require('@/assets/icons/User.png');
+            iconName = require('@/assets/icons/User.png');
           }
           return (
             <Image

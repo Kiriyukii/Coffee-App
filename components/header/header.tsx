@@ -12,6 +12,7 @@ import useUser from '@/hooks/auth/useUser';
 import { Feather } from '@expo/vector-icons';
 
 export default function Header() {
+  const { user } = useUser();
   let [fontsLoaded, fontError] = useFonts({
     SoraBold: Sora_700Bold,
     SoraRegular: Sora_400Regular,
@@ -20,7 +21,7 @@ export default function Header() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-  const { user } = useUser();
+
   return (
     <View style={styles.container}>
       <View style={styles.headerWrapper}>
