@@ -8,7 +8,10 @@ type User = {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
+  avatar?: {
+    public_id: string | any;
+    url: string | any;
+  };
   password?: string;
   createdAt: Date;
   updatedAt: Date;

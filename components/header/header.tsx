@@ -26,7 +26,9 @@ export default function Header() {
     return null;
   }
   const imageFallback = require('@/assets/icons/Unknown.png');
-
+  const imageSource = user?.avatar?.url
+    ? { uri: user.avatar.url }
+    : imageFallback;
   return (
     <View style={styles.container}>
       <View style={styles.headerWrapper}>
@@ -35,12 +37,7 @@ export default function Header() {
             console.log(user?.avatar);
           }}
         >
-          <Image
-            source={
-              user?.avatar ? user.avatar : require('@/assets/icons/Unknown.png')
-            }
-            style={styles.image}
-          />
+          <Image source={imageSource} style={styles.image} />
         </TouchableOpacity>
         <View>
           <Text style={[styles.helloText, { fontFamily: 'SoraBold' }]}>

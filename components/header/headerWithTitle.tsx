@@ -21,17 +21,15 @@ export default function HeaderWithTitle({ title }: { title: string }) {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-
+  const imageFallback = require('@/assets/icons/Unknown.png');
+  const imageSource = user?.avatar?.url
+    ? { uri: user.avatar.url }
+    : imageFallback;
   return (
     <View style={styles.container}>
       <View style={styles.headerWrapper}>
         <TouchableOpacity>
-          <Image
-            source={
-              user?.avatar ? user.avatar : require('@/assets/icons/Unknown.png')
-            }
-            style={styles.image}
-          />
+          <Image source={imageSource} style={styles.image} />
         </TouchableOpacity>
         <View style={styles.textWrapper}>
           <Text style={[styles.text, { fontFamily: 'SoraBold' }]}>{title}</Text>
