@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ImageBackground } from 'react-native';
 import {
@@ -14,10 +14,40 @@ import {
   Sora_200ExtraLight,
 } from '@expo-google-fonts/sora';
 import { useFonts } from 'expo-font';
+import { useStore } from '@/store/store';
+import { Toast } from 'react-native-toast-notifications';
 
 const imageFallback = require('@/assets/images/test.jpg');
 
 export default function BeanCard({ item }: { item: BeansType }) {
+  const [price, setPrice] = useState<{ size: string; price: number }>(
+    item.prices[2],
+  );
+  const addToCart = useStore((state: any) => state.addToCart);
+  const calculateCartPrice = useStore((state: any) => state.calculateCartPrice);
+  const HomeAddToCartHandler = ({
+    _id,
+    name,
+    roasted,
+    imagelink_portrait,
+    imagelink_square,
+    special_ingredient,
+    type,
+    prices,
+  }: any) => {
+    addToCart({
+      _id,
+      name,
+      roasted,
+      imagelink_portrait,
+      imagelink_square,
+      special_ingredient,
+      type,
+      prices,
+    });
+    calculateCartPrice();
+    Toast.show(`${name} has been add to Cart`, { type: 'success' });
+  };
   let [fontsLoaded, fontError] = useFonts({
     SoraBold: Sora_700Bold,
     SoraRegular: Sora_400Regular,
@@ -50,9 +80,22 @@ export default function BeanCard({ item }: { item: BeansType }) {
       <Text style={styles.subtextTitle}>{item.special_ingredient}</Text>
       <View style={styles.cardFooterRow}>
         <Text style={styles.cardCurrency}>
-          $ <Text style={styles.cardPrice}>4.2</Text>
+          $ <Text style={styles.cardPrice}>{price.price}</Text>
         </Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            HomeAddToCartHandler({
+              _id: item._id,
+              name: item.name,
+              roasted: item.roasted,
+              imagelink_portrait: item.imagelink_portrait,
+              imagelink_square: item.imagelink_square,
+              special_ingredient: item.special_ingredient,
+              type: item.type,
+              prices: [{ ...price, quantity: 1 }],
+            });
+          }}
+        >
           <View
             style={{
               height: 30,

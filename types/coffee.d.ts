@@ -19,7 +19,6 @@ type CoffeesType = {
   ratings_count: string;
   favorites: boolean;
   type: string;
-  handlePressButton?: any;
 };
 type BeansType = {
   _id: string;
@@ -41,5 +40,4 @@ type BeansType = {
   ratings_count: string;
   favorites: boolean;
   type: string;
-  handlePressButton?: any;
 };

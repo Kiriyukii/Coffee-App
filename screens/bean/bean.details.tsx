@@ -21,6 +21,7 @@ import {
   Sora_200ExtraLight,
 } from '@expo-google-fonts/sora';
 import { useFonts } from 'expo-font';
+import { useStore } from '@/store/store';
 
 export default function BeanDetailScreen() {
   const { item } = useLocalSearchParams();
@@ -30,6 +31,9 @@ export default function BeanDetailScreen() {
   const [price, setPrice] = useState<{ size: string; price: number }>(
     beanData.prices[0],
   );
+  const addToCart = useStore((state: any) => state.addToCart);
+  const calculateCartPrice = useStore((state: any) => state.calculateCartPrice);
+
   const imageFallback = require('@/assets/images/portrait.jpg');
   const imageSource = beanData.imagelink_portrait?.url
     ? { uri: beanData.imagelink_portrait.url }
@@ -58,6 +62,29 @@ export default function BeanDetailScreen() {
     } catch (error) {
       console.error('Error updating favorite status:', error);
     }
+  };
+  const addToCartHandler = ({
+    _id,
+    name,
+    roasted,
+    imagelink_portrait,
+    imagelink_square,
+    special_ingredient,
+    type,
+    price,
+  }: any) => {
+    addToCart({
+      _id,
+      name,
+      roasted,
+      imagelink_portrait,
+      imagelink_square,
+      special_ingredient,
+      type,
+      prices: [{ ...price, quantity: 1 }],
+    });
+    calculateCartPrice();
+    router.push('/cart');
   };
   let [fontsLoaded, fontError] = useFonts({
     SoraBold: Sora_700Bold,
@@ -214,7 +241,21 @@ export default function BeanDetailScreen() {
               <Text style={{ color: colors.primary }}>$ </Text> {price.price}
             </Text>
           </View>
-          <TouchableOpacity style={styles.payButton}>
+          <TouchableOpacity
+            style={styles.payButton}
+            onPress={() => {
+              addToCartHandler({
+                _id: beanData._id,
+                name: beanData.name,
+                roasted: beanData.roasted,
+                imagelink_portrait: beanData.imagelink_portrait,
+                imagelink_square: beanData.imagelink_square,
+                special_ingredient: beanData.special_ingredient,
+                type: beanData.type,
+                price: price,
+              });
+            }}
+          >
             <Text style={styles.buttonText}>Add to Cart</Text>
           </TouchableOpacity>
         </View>

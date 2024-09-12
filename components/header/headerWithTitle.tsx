@@ -10,12 +10,8 @@ import { colors, fontSize } from '@/constants/tokens';
 import { TouchableOpacity } from 'react-native';
 import useUser from '@/hooks/auth/useUser';
 import { Feather } from '@expo/vector-icons';
-import { useStore } from '@/store/store';
-import { router } from 'expo-router';
 
-export default function Header() {
-  const CartList = useStore((state: any) => state.CartList);
-  const cartLength = CartList.length;
+export default function HeaderWithTitle({ title }: { title: string }) {
   const { user } = useUser();
   let [fontsLoaded, fontError] = useFonts({
     SoraBold: Sora_700Bold,
@@ -25,16 +21,11 @@ export default function Header() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-  const imageFallback = require('@/assets/icons/Unknown.png');
 
   return (
     <View style={styles.container}>
       <View style={styles.headerWrapper}>
-        <TouchableOpacity
-          onPress={() => {
-            console.log(user?.avatar);
-          }}
-        >
+        <TouchableOpacity>
           <Image
             source={
               user?.avatar ? user.avatar : require('@/assets/icons/Unknown.png')
@@ -42,32 +33,13 @@ export default function Header() {
             style={styles.image}
           />
         </TouchableOpacity>
+        <View style={styles.textWrapper}>
+          <Text style={[styles.text, { fontFamily: 'SoraBold' }]}>{title}</Text>
+        </View>
         <View>
-          <Text style={[styles.helloText, { fontFamily: 'SoraBold' }]}>
-            Hello,
-          </Text>
-          <Text style={[styles.text, { fontFamily: 'SoraBold' }]}>
-            {user?.name}
-          </Text>
+          <View style={styles.bellContainer}></View>
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.bellButton}
-        onPress={() => {
-          router.push('/(tabs)/cart');
-        }}
-      >
-        <View>
-          <Feather name="shopping-bag" size={26} color={'white'} />
-          <View style={styles.bellContainer}>
-            <Text
-              style={{ color: '#fff', fontSize: 14, fontFamily: 'SoraBold' }}
-            >
-              {cartLength}
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -76,7 +48,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     marginHorizontal: 16,
     marginBottom: 16,
     width: '90%',
@@ -84,6 +55,8 @@ const styles = StyleSheet.create({
   headerWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    flex: 1,
   },
   image: {
     width: 45,
@@ -107,21 +80,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 
-  bellIcon: {
-    alignSelf: 'center',
+  textWrapper: {
+    flex: 1,
+    alignItems: 'center',
   },
 
   bellContainer: {
-    width: 20,
-    height: 20,
-    backgroundColor: colors.primary,
-    position: 'absolute',
-    borderRadius: 50,
-    right: -3,
-    top: -3,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 45,
+    height: 45,
+    right: 0,
+    top: 0,
   },
 
   helloText: { color: '#7C7C80', fontSize: 14 },

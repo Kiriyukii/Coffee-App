@@ -22,6 +22,7 @@ import {
   Sora_200ExtraLight,
 } from '@expo-google-fonts/sora';
 import { useFonts } from 'expo-font';
+import { useStore } from '@/store/store';
 
 export default function CoffeeDetailScreen() {
   const { item } = useLocalSearchParams();
@@ -31,6 +32,8 @@ export default function CoffeeDetailScreen() {
   const [price, setPrice] = useState<{ size: string; price: number }>(
     coffeeData.prices[0],
   );
+  const addToCart = useStore((state: any) => state.addToCart);
+  const calculateCartPrice = useStore((state: any) => state.calculateCartPrice);
   const imageFallback = require('@/assets/images/portrait.jpg');
   const imageSource = coffeeData.imagelink_portrait?.url
     ? { uri: coffeeData.imagelink_portrait.url }
@@ -59,6 +62,29 @@ export default function CoffeeDetailScreen() {
     } catch (error) {
       console.error('Error updating favorite status:', error);
     }
+  };
+  const addToCartHandler = ({
+    _id,
+    name,
+    roasted,
+    imagelink_portrait,
+    imagelink_square,
+    special_ingredient,
+    type,
+    price,
+  }: any) => {
+    addToCart({
+      _id,
+      name,
+      roasted,
+      imagelink_portrait,
+      imagelink_square,
+      special_ingredient,
+      type,
+      prices: [{ ...price, quantity: 1 }],
+    });
+    calculateCartPrice();
+    router.push('/cart');
   };
   let [fontsLoaded, fontError] = useFonts({
     SoraBold: Sora_700Bold,
@@ -217,7 +243,21 @@ export default function CoffeeDetailScreen() {
               <Text style={{ color: colors.primary }}>$ </Text> {price.price}
             </Text>
           </View>
-          <TouchableOpacity style={styles.payButton}>
+          <TouchableOpacity
+            style={styles.payButton}
+            onPress={() => {
+              addToCartHandler({
+                _id: coffeeData._id,
+                name: coffeeData.name,
+                roasted: coffeeData.roasted,
+                imagelink_portrait: coffeeData.imagelink_portrait,
+                imagelink_square: coffeeData.imagelink_square,
+                special_ingredient: coffeeData.special_ingredient,
+                type: coffeeData.type,
+                price: price,
+              });
+            }}
+          >
             <Text style={styles.buttonText}>Add to Cart</Text>
           </TouchableOpacity>
         </View>

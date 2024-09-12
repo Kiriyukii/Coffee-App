@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Platform } from 'react-native';
 import React from 'react';
 import { commonStyles } from '@/styles/common/common.styles';
 import { colors } from '@/constants/tokens';
@@ -12,7 +12,7 @@ export default function HomeScreen() {
   return (
     <LinearGradient
       colors={[colors.background, colors.background]}
-      style={{ flex: 1, paddingTop: 50 }}
+      style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 50 : 20 }}
     >
       <Header />
       <ScrollView>
