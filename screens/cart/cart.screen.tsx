@@ -451,6 +451,7 @@ const styles = StyleSheet.create({
     fontFamily: 'SoraBold',
     fontSize: fontSize.sm,
     color: colors.text,
+    textAlign: 'center',
   },
   cartSingleItemLinear: {
     flexDirection: 'row',
