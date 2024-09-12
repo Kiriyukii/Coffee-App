@@ -9,48 +9,19 @@ import React, { useEffect, useState } from 'react';
 import { colors, fontSize } from '@/constants/tokens';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { SERVER_URI } from '@/utils/uri';
-import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function FavoriteCard({ item }: { item: FavoriteType }) {
-  const [isFavorite, setIsFavorite] = useState(false);
   const imageFallback = require('@/assets/images/portrait.jpg');
   const imageSource = item.imagelink_portrait?.url
     ? { uri: item.imagelink_portrait.url }
     : imageFallback;
-
-  useEffect(() => {
-    const fetchFavoriteStatus = async () => {
-      try {
-        const response = await axios.get(
-          `${SERVER_URI}/get-coffee/${item._id}`,
-        );
-        setIsFavorite(response.data.favorites);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchFavoriteStatus();
-  }, [item._id]);
-  const toggleFavorites = async () => {
-    try {
-      const newStatus = !isFavorite;
-      await axios.patch(`${SERVER_URI}/patch-coffee/${item._id}`, {
-        favorites: newStatus,
-      });
-      setIsFavorite(newStatus);
-    } catch (error) {
-      console.error('Error updating favorite status:', error);
-    }
-  };
   return (
     <View style={styles.CardContainer}>
       <View>
         <ImageBackground source={imageSource} style={styles.BackgroundImage}>
           <View style={styles.headerBar}>
-            <TouchableOpacity onPress={toggleFavorites}>
+            <TouchableOpacity>
               <View></View>
             </TouchableOpacity>
           </View>
@@ -190,7 +161,7 @@ const styles = StyleSheet.create({
     fontFamily: 'SoraThin',
     fontSize: fontSize.xs,
   },
-  containerLinear: { gap: 10, padding: 20, paddingBottom: 90 },
+  containerLinear: { gap: 10, padding: 20 },
   descriptionTitle: {
     color: '#AEAEAE',
     fontFamily: 'SoraBold',

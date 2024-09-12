@@ -23,11 +23,12 @@ import {
 } from '@expo-google-fonts/sora';
 import { useFonts } from 'expo-font';
 import { useStore } from '@/store/store';
+import Loader from '@/components/loader/loader';
 
 export default function CoffeeDetailScreen() {
   const { item } = useLocalSearchParams();
   const coffeeData: CoffeesType = JSON.parse(item as string);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(coffeeData.favorites);
   const [fullDesc, setFullDesc] = useState(false);
   const [price, setPrice] = useState<{ size: string; price: number }>(
     coffeeData.prices[0],
@@ -38,20 +39,6 @@ export default function CoffeeDetailScreen() {
   const imageSource = coffeeData.imagelink_portrait?.url
     ? { uri: coffeeData.imagelink_portrait.url }
     : imageFallback;
-
-  useEffect(() => {
-    const fetchFavoriteStatus = async () => {
-      try {
-        const response = await axios.get(
-          `${SERVER_URI}/get-coffee/${coffeeData._id}`,
-        );
-        setIsFavorite(response.data.favorites);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchFavoriteStatus();
-  }, [item]);
   const toggleFavorites = async () => {
     try {
       const newStatus = !isFavorite;
@@ -93,6 +80,9 @@ export default function CoffeeDetailScreen() {
   });
   if (!fontsLoaded && !fontError) {
     return null;
+  }
+  if (isFavorite === undefined) {
+    return <Loader />;
   }
   return (
     <View style={styles.ScreenContainer}>

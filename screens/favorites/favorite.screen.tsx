@@ -37,6 +37,9 @@ export default function FavoriteScreen() {
       }
     };
     fetchFavorites();
+    const intervalId = setInterval(fetchFavorites, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(intervalId);
   }, []);
 
   let [fontsLoaded, fontError] = useFonts({
