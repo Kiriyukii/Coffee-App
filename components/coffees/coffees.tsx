@@ -21,7 +21,6 @@ import { styles } from '@/styles/home/cate.style';
 import CoffeeCard from '../card/coffee.card';
 import BeanCard from '../card/bean.card';
 import { router } from 'expo-router';
-import { useStore } from '@/store/store';
 
 export default function Coffees() {
   const [coffees, setCoffees] = useState<CoffeesType[]>([]);

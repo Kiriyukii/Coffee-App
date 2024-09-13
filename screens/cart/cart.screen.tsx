@@ -41,7 +41,10 @@ export default function CartScreen() {
     calculateCartPrice();
   };
   const buttonPressHandler = () => {
-    router.push('/(routes)/payments');
+    router.push({
+      pathname: '/(routes)/payments',
+      params: { amount: CartPrice },
+    });
   };
 
   let [fontsLoaded, fontError] = useFonts({
@@ -133,7 +136,6 @@ export default function CartScreen() {
                                 <TouchableOpacity
                                   style={styles.cartItemIcon}
                                   onPress={() => {
-                                    console.log(data);
                                     decrementQuantityHandler(
                                       data._id,
                                       priceData.size,

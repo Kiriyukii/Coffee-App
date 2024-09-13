@@ -8,6 +8,7 @@ export default function useUser() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User>();
   const [error, setError] = useState('');
+  const [refetch, setRefetch] = useState(false);
   useEffect(() => {
     const subscription = async () => {
       const accessToken = await AsyncStorage.getItem('access_token');
@@ -29,6 +30,6 @@ export default function useUser() {
         });
     };
     subscription();
-  }, []);
-  return { loading, user };
+  }, [refetch]);
+  return { loading, user, setRefetch, error, refetch };
 }

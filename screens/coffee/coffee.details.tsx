@@ -7,7 +7,7 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { colors, fontSize } from '@/constants/tokens';
 import { StatusBar } from 'expo-status-bar';
@@ -24,6 +24,7 @@ import {
 import { useFonts } from 'expo-font';
 import { useStore } from '@/store/store';
 import Loader from '@/components/loader/loader';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function CoffeeDetailScreen() {
   const { item } = useLocalSearchParams();
@@ -39,7 +40,7 @@ export default function CoffeeDetailScreen() {
   const imageSource = coffeeData.imagelink_portrait?.url
     ? { uri: coffeeData.imagelink_portrait.url }
     : imageFallback;
-  const toggleFavorites = async () => {
+  const toggleFavorites = useCallback(async () => {
     try {
       const newStatus = !isFavorite;
       await axios.patch(`${SERVER_URI}/patch-coffee/${coffeeData._id}`, {
@@ -49,7 +50,7 @@ export default function CoffeeDetailScreen() {
     } catch (error) {
       console.error('Error updating favorite status:', error);
     }
-  };
+  }, [isFavorite]);
   const addToCartHandler = ({
     _id,
     name,
@@ -80,9 +81,6 @@ export default function CoffeeDetailScreen() {
   });
   if (!fontsLoaded && !fontError) {
     return null;
-  }
-  if (isFavorite === undefined) {
-    return <Loader />;
   }
   return (
     <View style={styles.ScreenContainer}>

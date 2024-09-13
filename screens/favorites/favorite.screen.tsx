@@ -19,6 +19,7 @@ import HeaderWithTitle from '@/components/header/headerWithTitle';
 import { colors } from '@/constants/tokens';
 import EmptyList from '@/components/empty/empty.list';
 import FavoriteCard from '@/components/card/favorite.card';
+import { router } from 'expo-router';
 export default function FavoriteScreen() {
   const [favorites, setFavorites] = useState<CoffeesType[] | BeansType[]>([]);
   useEffect(() => {
@@ -64,7 +65,19 @@ export default function FavoriteScreen() {
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => {
               return (
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    const itemType = item.type;
+                    const route =
+                      itemType == 'Coffee'
+                        ? '/(routes)/coffee-details'
+                        : '/(routes)/bean-details';
+                    router.push({
+                      pathname: route,
+                      params: { item: JSON.stringify(item) },
+                    });
+                  }}
+                >
                   <FavoriteCard item={item} />
                 </TouchableOpacity>
               );

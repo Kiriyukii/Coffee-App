@@ -1,12 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
+import PaymentScreen from '@/screens/payment/payment.screen';
 
 export default function Payments() {
-  return (
-    <View>
-      <Text>index</Text>
-    </View>
-  );
+  return <PaymentScreen />;
 }
 
 const styles = StyleSheet.create({});

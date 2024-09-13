@@ -9,7 +9,7 @@ import { useFonts } from 'expo-font';
 import { colors, fontSize } from '@/constants/tokens';
 import { TouchableOpacity } from 'react-native';
 import useUser from '@/hooks/auth/useUser';
-import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 export default function HeaderWithTitle({ title }: { title: string }) {
   const { user } = useUser();
@@ -28,7 +28,11 @@ export default function HeaderWithTitle({ title }: { title: string }) {
   return (
     <View style={styles.container}>
       <View style={styles.headerWrapper}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            router.push('/(tabs)/profile');
+          }}
+        >
           <Image source={imageSource} style={styles.image} />
         </TouchableOpacity>
         <View style={styles.textWrapper}>

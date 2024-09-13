@@ -14,9 +14,9 @@ import { useStore } from '@/store/store';
 import { router } from 'expo-router';
 
 export default function Header() {
+  const { user } = useUser();
   const CartList = useStore((state: any) => state.CartList);
   const cartLength = CartList.length;
-  const { user } = useUser();
   let [fontsLoaded, fontError] = useFonts({
     SoraBold: Sora_700Bold,
     SoraRegular: Sora_400Regular,
@@ -34,7 +34,7 @@ export default function Header() {
       <View style={styles.headerWrapper}>
         <TouchableOpacity
           onPress={() => {
-            console.log(user?.avatar);
+            router.push('/(tabs)/profile');
           }}
         >
           <Image source={imageSource} style={styles.image} />
